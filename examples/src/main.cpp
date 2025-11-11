@@ -1,10 +1,10 @@
-#include "generated/IWorkBridge.h"
+#include "IWorkStable.h"
 #include "IWork.h"
 #include "mywork.h"
 
 int main()
 {
-   auto work = CreateIWorkBridge(CreateMyWork());
+   auto work = CreateStableIWork(CreateMyWork());
    work->DoWork();
    
 }
