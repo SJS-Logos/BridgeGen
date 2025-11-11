@@ -2,36 +2,25 @@
 #include <memory>
 #include "../IWork.h"
 
-namespace detail {
-
-// Hidden bridge (not part of public ABI)
-class IWorkBridge {
+class WorkBridge {
 public:
-    explicit IWorkBridge(std::unique_ptr<IWork>&& impl)
-        : impl_(std::move(impl)) {}
-
-    void DoWork() const { impl_->DoWork(); }
-
+    explicit WorkBridge(std::unique_ptr<IWork>&& impl);
+    void DoWork() const;
+    ~WorkBridge();
 private:
     std::unique_ptr<IWork> impl_;
 };
 
-} // namespace detail
-
 // Proxy implementing IWork
-class IWorkProxy : public IWork {
+class WorkProxy : public IWork {
 public:
-    explicit IWorkProxy(std::unique_ptr<detail::IWorkBridge>&& bridge)
+    explicit WorkProxy(std::unique_ptr<WorkBridge>&& bridge)
         : bridge_(std::move(bridge)) {}
 
     inline void DoWork() const override { bridge_->DoWork(); }
 
 private:
-    std::unique_ptr<detail::IWorkBridge> bridge_;
+    std::unique_ptr<WorkBridge> bridge_;
 };
 
-// Inline factory (header-only)
-inline std::unique_ptr<IWork> CreateStableIWork(std::unique_ptr<IWork>&& impl) {
-    auto bridge = std::make_unique<detail::IWorkBridge>(std::move(impl));
-    return std::make_unique<IWorkProxy>(std::move(bridge));
-}
+std::unique_ptr<IWork> CreateStableIWork(std::unique_ptr<IWork>&& impl);
