@@ -87,7 +87,7 @@ def parse_interface(header_text):
 
 TPL_HEADER = """#pragma once
 #include <memory>
-#include "{orig_header}"
+#include "../{orig_header}"
 
 namespace detail {{
 
@@ -203,7 +203,8 @@ def generate_files(header_path):
         proxy_methods=proxy_methods,
     )
 
-    out_file = header_path.with_name(f"generated//{interface_name}Stable.h")
+    out_file = header_path.parent / "Stable" /f"{interface_name}.h"
+    print(out_file)
     out_file.parent.mkdir(parents=True, exist_ok=True)
     out_file.write_text(h_out, encoding="utf-8")
     print(f"✅ Generated generated/{out_file.name} from {orig_header}")

@@ -1,4 +1,4 @@
-#include "IWorkStable.h"
+#include "Stable/IWork.h"
 #include "IWork.h"
 #include "mywork.h"
 
