@@ -172,7 +172,7 @@ TPL_CPP = """//-----------------------------------------------------------------
 //  (see full description in {interface_name}.h)
 //------------------------------------------------------------------------------
 
-#include "{interface_name}Bridge.h"
+#include "{interface_name}Stable.h"
 
 class {interface_name}Bridge {{
 public:
@@ -210,7 +210,7 @@ def generate_override_methods_decl(methods):
     return "\n".join(result)
 
 
-def generate_forwarding_methods_impl(prepend_name, append_name, methods):
+def generate_forwarding_methods_impl(prepend_name, methods):
     result = []
     for m in methods:
         const_str = " const" if m["const"] else ""
@@ -218,7 +218,7 @@ def generate_forwarding_methods_impl(prepend_name, append_name, methods):
         args = m["args"]
         arg_names = ", ".join([a.strip().split()[-1] for a in args.split(",") if a.strip()]) if args else ""
         result.append(
-            f"    {m['return_type']} {prepend_name}{m['name']}({args}){const_str} {append_name} {{ "
+            f"    {m['return_type']} {prepend_name}{m['name']}({args}){const_str} {{ "
             f"{ret}impl_->{m['name']}({arg_names}); }}\n"
         )
     return "\n".join(result)
@@ -246,8 +246,8 @@ def generate_files(header_file):
 
     stable_name = interface_name + "Stable"
     override_methods_decl = generate_override_methods_decl(methods)
-    bridge_methods_impl = generate_forwarding_methods_impl("", "override", methods)
-    proxy_methods_impl = generate_forwarding_methods_impl(f"{interface_name}Proxy::", "", methods)
+    bridge_methods_impl = generate_forwarding_methods_impl("", methods)
+    proxy_methods_impl = generate_forwarding_methods_impl(f"{interface_name}Proxy::", methods)
     h_out = TPL_H.format(
         interface_name=interface_name,
         override_methods_decl=override_methods_decl,
